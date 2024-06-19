@@ -1,0 +1,28 @@
+<script>
+   async function fetchData() {
+       const endpoint = 'https://database-1.crhwxgwlg3at.us-east-1.rds.amazonaws.com'; // 여기에 AWS 서버의 엔드포인트를 입력하세요
+       const response = await fetch(endpoint); // 서버의 API 엔드포인트로 변경
+
+       console.log('Fetching data from:', endpoint);
+
+       console.log('Fetching data from:', response);
+
+    try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Received data:', data);
+
+        // 데이터를 받아와서 처리하는 로직 추가
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+setInterval(fetchData, 5000); // 예시로 5초마다 데이터 요청
+
+
+
+</script>
