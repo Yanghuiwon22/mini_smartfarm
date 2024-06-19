@@ -361,6 +361,9 @@
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h6 class="text-capitalize">Sales overview</h6>
               <p class="text-sm mb-0">
+<!--              여기-->
+                    <ul id="dataList"></ul>
+
                 <i class="fa fa-arrow-up text-success"></i>
                 <span class="font-weight-bold">4% more</span> in 2021
               </p>
@@ -739,7 +742,66 @@
   <script src="./assets/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="./assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="./assets/js/plugins/chartjs.min.js"></script>
-  <script>
+  <script type="module">
+    fetch('/api/data')
+            .then(response => response.json())
+            .then(data => {
+                const dataList = document.getElementById('dataList');
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.id}: ${item.name}`; // 예시: 데이터 필드에 맞게 수정
+                    dataList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('데이터 가져오기 실패:', error));
+
+
+    import express from 'https://cdn.skypack.dev/express';
+    import pg from 'https://cdn.skypack.dev/pg';
+
+    const { Pool } = pg;
+    const app = express();
+    const port = 3000;
+
+    // PostgreSQL 연결 설정
+    const pool = new Pool({
+      user: 'danuni',
+      host: 'database-1.crhwxgwlg3at.us-east-1.rds.amazonaws.com',
+      database: 'postgres',
+      password: 'gkekdms0429',
+      port: 5432,
+    });
+
+    // 데이터베이스 연결 테스트
+    pool.query('SELECT NOW()', (err, res) => {
+      if (err) {
+        console.error('Database connection error:', err.stack);
+      } else {
+        console.log('Connected to database at:', res.rows[0].now);
+      }
+    });
+
+    // API 엔드포인트: 데이터 가져오기 예시
+    app.get('/api/data', (req, res) => {
+      const query = 'SELECT * FROM your_table;';
+
+      pool.query(query, (err, dbRes) => {
+        if (err) {
+          console.error('Error executing query:', err.stack);
+          res.status(500).json({error: 'Failed to retrieve data'});
+        } else {
+          const data = dbRes.rows;
+          res.json(data); // 데이터를 JSON 형식으로 클라이언트에게 전송
+        }
+      });
+    });
+
+    // 서버 시작
+    app.listen(port, () => {
+      console.log(`Server is listening at http://localhost:${port}`);
+    });
+
+
     var ctx1 = document.getElementById("chart-line").getContext("2d");
 
     var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
